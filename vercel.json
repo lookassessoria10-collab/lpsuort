@@ -3,6 +3,10 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    { "source": "/", "destination": "/especialidades/joelho", "permanent": false },
+    { "source": "/especialidades", "destination": "/especialidades/joelho", "permanent": false }
+  ],
   "headers": [
     {
       "source": "/especialidades/assets/(.*)",

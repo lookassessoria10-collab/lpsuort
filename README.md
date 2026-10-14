@@ -131,7 +131,9 @@ domínio principal.
 ## Publicação
 
 O build gera tudo em `dist/`, sob o prefixo `/especialidades`, para conviver com o site institucional.
-`vercel.json` já define a saída e URLs sem `.html`. Não há deploy automático configurado.
+`vercel.json` já define a saída e URLs sem `.html`. As páginas ficam em `/especialidades/<slug>`, e a raiz
+(`/` e `/especialidades`) redireciona temporariamente para `/especialidades/joelho`, porque não há página de índice.
+O projeto está na Vercel ligado ao GitHub: cada push na `main` gera um novo deploy de produção.
 
 Antes de publicar, resolva as pendências listadas por `npm run lint` (imagens, domínio, CEP, responsável
 técnico, GTM).
