@@ -53,26 +53,29 @@ export const site = {
   // Lista informada pela UORT no briefing das landing pages.
   // A CONFIRMAR: o briefing de marca cita também Bradesco Saúde, Unimed, Mediservice e Blue Saúde,
   // e o site oficial exibe o logo da Gama Saúde. Nenhuma dessas aparece na lista mais recente.
+  // Logo oficial em src/assets/img/convenios/<id>.webp (original em imagens-originais/convenios/).
+  // Sem o arquivo, o convênio aparece como um cartão com o nome, no mesmo formato das logos.
   convenios: [
-    'ASFEB Saúde',
-    'Unimed CNU',
-    'SulAmérica',
-    'Proasa',
-    'Saúde Caixa',
-    'Postal Saúde',
-    'Seguros Unimed',
-    'GEAP',
-    'Cartão Saúde Para Todos',
-    'PlanAssiste',
-    'Petrobras',
-    'ProSocial',
-    'Nordeste Saúde',
+    { id: 'asfeb-saude', nome: 'ASFEB Saúde' },
+    { id: 'unimed-cnu', nome: 'Unimed CNU' },
+    { id: 'sulamerica', nome: 'SulAmérica' },
+    { id: 'proasa', nome: 'Proasa' },
+    { id: 'saude-caixa', nome: 'Saúde Caixa' },
+    { id: 'postal-saude', nome: 'Postal Saúde' },
+    { id: 'seguros-unimed', nome: 'Seguros Unimed' },
+    { id: 'geap', nome: 'GEAP' },
+    { id: 'saude-para-todos', nome: 'Cartão Saúde Para Todos' },
+    { id: 'planassiste', nome: 'PlanAssiste' },
+    { id: 'petrobras', nome: 'Petrobras' },
+    { id: 'prosocial', nome: 'ProSocial' },
+    { id: 'nordeste-saude', nome: 'Nordeste Saúde' },
   ],
   conveniosObservacao:
     'A cobertura pode variar conforme o plano e o tipo de atendimento. Confirme no momento do agendamento.',
 
-  // Canal para onde vão os botões "Agende sua consulta".
-  // "whatsapp" usa a mensagem de agendamento de cada especialidade; "url" usa agendamento.url.
+  // Canal do botão principal de cada bloco ("Agendar pelo WhatsApp").
+  // "whatsapp" usa a mensagem de agendamento de cada especialidade; "url" usa agendamento.url
+  // e o botão passa a se chamar "Agende sua consulta". O botão flutuante é sempre WhatsApp.
   agendamento: { canal: 'whatsapp', url: '' },
 
   // Monitoramento: nada é carregado enquanto os IDs estiverem vazios.

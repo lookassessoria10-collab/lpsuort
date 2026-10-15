@@ -11,8 +11,9 @@ export default {
   },
 
   hero: {
-    titulo: 'Especialistas\nem **Ombro**',
-    subtitulo: 'Avaliação e tratamento para dores, lesões e dificuldades de movimento que afetam o ombro.',
+    titulo: 'Dor no ombro\n**limitando seus movimentos?**',
+    subtitulo:
+      'Avaliação com especialista em ombro para entender a origem da dor e da limitação e definir o cuidado adequado.',
     imagem: {
       arquivo: 'hero.webp',
       alt: 'Ortopedista da UORT conduzindo a elevação do braço de um paciente para avaliar o ombro',
@@ -157,6 +158,12 @@ export default {
   ctaFinal: {
     titulo: 'Seu ombro merece **atenção.**',
     texto: 'Conte com a UORT para avaliar a dor e a limitação no ombro e encontrar o cuidado adequado para o seu caso.',
+  },
+
+  medicos: {
+    equipe: ['nivaldo-cardozo'],
+    meio: { medico: 'nivaldo-cardozo', foto: 'consulta' },
+    final: { medico: 'nivaldo-cardozo', foto: 'consultorio' },
   },
 
   mensagemWhatsApp: 'Olá! Vim pela página de Ombro da UORT e gostaria de agendar uma consulta.',

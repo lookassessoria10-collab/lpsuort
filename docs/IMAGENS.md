@@ -36,8 +36,38 @@ originais em alta resolução assim que estiverem disponíveis. A imagem de sint
 "Existe um caminho de volta para o movimento" aplicado no canto inferior direito; o cartão da página cobre
 essa área em todos os tamanhos de tela, mas o ideal é receber a versão **sem texto**.
 
-A foto do médico usada no bloco 4 da referência **não** foi aproveitada, porque as páginas não podem dar
-protagonismo a profissionais individuais.
+## Médicos
+
+As fotos dos médicos ficam em `src/assets/img/equipe/` e são cadastradas em `src/config/medicos.js`. Os originais
+recortados (retrato 4:5, avatar quadrado), reduzidos a até 1600 px e sem metadados ficam em
+`imagens-originais/equipe/`; `npm run imagens -- equipe` gera os WebP (retratos até 900 px, avatares 160 px).
+
+| Especialidade | Médicos (cartões) | Destaque do meio | Foto do CTA final |
+|---|---|---|---|
+| Joelho | David Sadigursky (DSC05264), Luís Cláudio Chagas (site oficial), Roney Sant’Anna (roney-091) | Luís Cláudio (img-dr-luis) | Roney (images.jpg, **365 px, baixa resolução**) |
+| Coluna | Sérgio Murilo Andrade (site oficial) | — | — |
+| Ombro | Nivaldo Cardozo Filho (DSC00814) | Nivaldo examinando um paciente (DSC00794) | Nivaldo no consultório (DSC00831) |
+| Quadril | Alexandre Meirelles (DSC03511), Alan Chagas Silva (Instagram) | Alexandre em consulta (DSC03503) | Alan com modelo do quadril (Instagram) |
+| Pé e Tornozelo | sem fotos | — | — |
+
+Observações:
+- As fotos do Dr. Luís Cláudio vieram na pasta de coluna, mas o site oficial o lista em **Joelho**; por isso ele
+  está na página de joelho. Para mudar, mova o id `luis-claudio-chagas` em `medicos.equipe`.
+- DSC00794 mostra parte das costas e da tatuagem de um paciente (sem rosto). Confirme a autorização de uso.
+- Não foram usadas: a foto do Dr. David com outra pessoa (IMG_1653) e o retrato emoldurado do Dr. Luís
+  (institutoluiscarloschagas-img01).
+
+## Convênios
+
+Logos em `src/assets/img/convenios/<id>.webp` (id de `site.convenios`), geradas a partir de
+`imagens-originais/convenios/<id>.(png|jpg)` com `npm run imagens -- convenios`. O script remove a margem branca
+em volta da logo. Enquanto a logo não existe, o convênio aparece como um cartão branco com o nome, no mesmo
+tamanho dos demais.
+
+| Situação | Convênios |
+|---|---|
+| ✅ logo do site oficial (uort.com.br/img/convenios) | ASFEB Saúde, Unimed CNU, SulAmérica, Proasa, Saúde Caixa, Postal Saúde, Seguros Unimed, Cartão Saúde Para Todos ("Paratodos") |
+| ⏳ pendente (cartão com o nome) | GEAP, PlanAssiste, Petrobras, ProSocial, Nordeste Saúde |
 
 ## Como adicionar ou substituir
 
@@ -58,9 +88,10 @@ protagonismo a profissionais individuais.
 | Sintomas (cartão arredondado, com destaque sobreposto no canto inferior direito) | 397 : 336 (~ 1,18:1) | ≥ 1600 px | ≤ 140 KB (WebP) |
 | Estrutura da UORT | 4 : 5 (desktop) / 4 : 3 (celular) | ≥ 1200 px | ≤ 160 KB (WebP) |
 
-Direção visual comum a todas: luz clara e difusa, fundo branco ou azul-esverdeado muito suave, jaleco com a
-marca UORT quando houver profissional em cena, enquadramento nas mãos e na região avaliada (sem destacar rosto
-de médico), paciente sereno (sem expressão exagerada de dor). No hero, deixar o **terço esquerdo da imagem
+Direção visual comum às imagens de hero e sintomas: luz clara e difusa, fundo branco ou azul-esverdeado muito
+suave, jaleco com a marca UORT quando houver profissional em cena, enquadramento nas mãos e na região avaliada
+(os rostos dos médicos aparecem nos blocos de equipe, com nome e CRM), paciente sereno (sem expressão exagerada
+de dor). No hero, deixar o **terço esquerdo da imagem
 limpo**, porque ele se funde ao fundo da página. Na imagem de sintomas, deixar o **canto inferior direito
 livre**, onde fica o cartão de destaque.
 

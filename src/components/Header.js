@@ -1,5 +1,5 @@
 import { attrs, html } from '../lib/html.js';
-import { caminhoPagina } from '../lib/links.js';
+import { caminhoPagina, linkAgendamento } from '../lib/links.js';
 import { BotaoAgendar } from './Cta.js';
 import { icon } from './Icons.js';
 
@@ -29,7 +29,9 @@ export function Header({ esp, especialidades }) {
         esp,
         posicao: 'cabecalho',
         variante: 'compacto',
-        rotulo: html`<span class="lbl-full">Agende sua consulta</span><span class="lbl-short">Agendar</span>`,
+        rotulo: html`<span class="lbl-full">${
+          linkAgendamento(esp).canal === 'whatsapp' ? 'Agendar pelo WhatsApp' : 'Agende sua consulta'
+        }</span><span class="lbl-short">Agendar</span>`,
       })}
     </div>
   </div>

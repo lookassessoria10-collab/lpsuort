@@ -11,8 +11,9 @@ export default {
   },
 
   hero: {
-    titulo: 'Especialistas\nem **Joelho**',
-    subtitulo: 'Avaliação e tratamento para dores, lesões e alterações que comprometem os movimentos do joelho.',
+    titulo: 'Sofrendo com\n**dor no joelho?**',
+    subtitulo:
+      'Avaliação com especialistas em joelho para descobrir a causa da dor e definir o tratamento adequado para o seu caso.',
     imagem: {
       arquivo: 'hero.webp',
       alt: 'Ortopedista da UORT avaliando o joelho de um paciente sentado',
@@ -152,6 +153,13 @@ export default {
   ctaFinal: {
     titulo: 'Seu joelho merece **atenção.**',
     texto: 'Conte com a UORT para avaliar a dor no joelho e encontrar o cuidado adequado para o seu caso.',
+  },
+
+  // Equipe de joelho no site oficial: David Sadigursky, Luís Cláudio Chagas e Roney Sant’Anna.
+  medicos: {
+    equipe: ['david-sadigursky', 'luis-claudio-chagas', 'roney-santanna'],
+    meio: { medico: 'luis-claudio-chagas', foto: 'estudio' },
+    final: { medico: 'roney-santanna', foto: 'estudio' },
   },
 
   mensagemWhatsApp: 'Olá! Vim pela página de Joelho da UORT e gostaria de agendar uma consulta.',

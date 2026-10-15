@@ -1,6 +1,6 @@
 /**
  * Valida o conteúdo antes do build: estrutura de cada especialidade, limites de SEO,
- * recursos da clínica, termos proibidos (nomes de médicos, promessas, superlativos) e pendências.
+ * recursos da clínica, médicos (CRM), termos proibidos (promessas, superlativos) e pendências.
  * Erros encerram com código 1; avisos apenas informam.
  */
 import fs from 'node:fs';
@@ -8,15 +8,21 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { ICONES } from '../src/components/Icons.js';
 import { especialidades } from '../src/config/especialidades/index.js';
+import { medicos } from '../src/config/medicos.js';
 import { recursos } from '../src/config/recursos.js';
 import { site } from '../src/config/site.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TIPOS = new Set(['conservador', 'reabilitacao', 'procedimento', 'cirurgico']);
 
+/** Padrões que identificam o nome de um médico no meio do texto. */
+const NOME_DE_MEDICO = new Set(['nome de médico (Dr./Dra.)', 'nome de médico (doutor/doutora)']);
+
 /**
- * Comunicação institucional e responsável: nada de médicos em destaque, promessas ou rankings.
- * Os padrões valem para todo o texto publicado (especialidades e dados institucionais).
+ * Comunicação responsável: sem promessas, rankings ou superlativos.
+ * Os padrões valem para todo o texto publicado (especialidades, dados institucionais e médicos).
+ * Nomes de médicos só entram pelo cadastro em src/config/medicos.js, que exige o CRM; no texto
+ * das especialidades e da clínica eles continuam proibidos.
  */
 export const TERMOS_PROIBIDOS = [
   { padrao: /\bDra?\.\s*[A-ZÀ-Ú]/, motivo: 'nome de médico (Dr./Dra.)' },
@@ -70,9 +76,26 @@ export function lint() {
     if (!/salvador/i.test(title)) erro(onde, 'seo.title deve citar Salvador (SEO local)');
     if (!/salvador/i.test(description)) erro(onde, 'seo.description deve citar Salvador (SEO local)');
 
-    const h1 = esp.hero?.titulo?.replace(/\*\*|\n/g, ' ').replace(/\s+/g, ' ') ?? '';
-    if (!h1.includes('Especialistas') || !h1.includes(esp.nome)) erro(onde, 'hero.titulo deve seguir "Especialistas em [Especialidade]"');
+    // H1 focado na dor do paciente: cita a região do corpo e não volta ao genérico "Especialistas em…",
+    // que agora fica no eyebrow do hero.
+    const h1 = esp.hero?.titulo?.replace(/\*\*|\n/g, ' ').replace(/\s+/g, ' ').trim() ?? '';
+    const palavrasRegiao = (esp.regiao?.nome ?? '').split(' ').filter((p) => p.length > 2);
+    if (!palavrasRegiao.some((p) => h1.toLowerCase().includes(p))) erro(onde, `hero.titulo deve citar a região (${esp.regiao?.nome})`);
+    if (/^especialistas?\b/i.test(h1)) erro(onde, 'hero.titulo deve falar da dor do paciente, não "Especialistas em…" (já está no eyebrow)');
+    if (h1.length > 60) erro(onde, `hero.titulo com ${h1.length} caracteres (use até 60)`);
     if (!esp.hero?.subtitulo) erro(onde, 'hero.subtitulo obrigatório');
+
+    if (esp.medicos) {
+      const { equipe = [], meio, final } = esp.medicos;
+      if (!equipe.length) erro(onde, 'medicos.equipe vazio (remova "medicos" se a página não tiver médicos)');
+      for (const id of equipe) if (!medicos[id]) erro(onde, `médico inexistente "${id}" em medicos.equipe`);
+      for (const [chave, d] of [['meio', meio], ['final', final]]) {
+        if (!d) continue;
+        if (!medicos[d.medico]) erro(onde, `médico inexistente "${d.medico}" em medicos.${chave}`);
+        else if (!equipe.includes(d.medico)) erro(onde, `medicos.${chave}: "${d.medico}" precisa estar na equipe (é lá que aparece o CRM)`);
+        else if (!medicos[d.medico].fotos[d.foto]) erro(onde, `medicos.${chave}: foto "${d.foto}" não cadastrada para "${d.medico}"`);
+      }
+    }
 
     if (esp.sintomas?.itens?.length !== 4) erro(onde, 'sintomas.itens deve ter exatamente 4 itens');
     for (const item of esp.sintomas?.itens ?? []) if (!ICONES[item.icone]) erro(onde, `ícone inexistente "${item.icone}"`);
@@ -126,6 +149,29 @@ export function lint() {
       if (padrao.test(texto)) erro('site', `${caminho}: ${motivo} → "${texto.match(padrao)[0]}"`);
     }
   }
+
+  for (const [id, m] of Object.entries(medicos)) {
+    const onde = `medicos.${id}`;
+    if (!/^Dra?\. \S/.test(m.nome ?? '')) erro(onde, 'nome deve começar com "Dr." ou "Dra."');
+    if (!/^\d{1,3}(\.\d{3})?$/.test(m.crm ?? '')) erro(onde, `CRM obrigatório no formato 15.778 (recebido "${m.crm ?? ''}")`);
+    if (!m.area) erro(onde, 'area obrigatória');
+    if (!m.fotos?.retrato) erro(onde, 'fotos.retrato obrigatória');
+    if (!m.rqe) aviso(onde, 'RQE não informado (Resolução CFM 2.336/2023: confirmar com a UORT)');
+    for (const [chave, foto] of Object.entries(m.fotos ?? {})) {
+      if (!foto.arquivo) erro(onde, `fotos.${chave} sem "arquivo"`);
+      else if (!fs.existsSync(path.join(RAIZ, 'src/assets/img', foto.arquivo))) aviso(onde, `fotos.${chave} pendente (src/assets/img/${foto.arquivo})`);
+      if (chave !== 'avatar' && !foto.alt) erro(onde, `fotos.${chave} sem "alt"`);
+    }
+    for (const { caminho, texto } of textos({ area: m.area, formacao: m.formacao })) {
+      for (const { padrao, motivo } of TERMOS_PROIBIDOS) {
+        if (NOME_DE_MEDICO.has(motivo)) continue;
+        if (padrao.test(texto)) erro(onde, `${caminho}: ${motivo} → "${texto.match(padrao)[0]}"`);
+      }
+    }
+  }
+
+  const semLogo = site.convenios.filter((c) => !fs.existsSync(path.join(RAIZ, 'src/assets/img/convenios', `${c.id}.webp`)));
+  if (semLogo.length) aviso('site', `convênios sem logo (aparecem como cartão com o nome): ${semLogo.map((c) => c.nome).join(', ')}`);
 
   if (!fs.existsSync(path.join(RAIZ, 'src/assets/img', site.fotoEstrutura.arquivo))) {
     aviso('site', `foto da estrutura pendente (src/assets/img/${site.fotoEstrutura.arquivo})`);

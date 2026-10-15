@@ -24,7 +24,7 @@ function recursosDaEspecialidade(esp) {
   };
 }
 
-/** Bloco 06: por que escolher a UORT. Autoridade atribuída à instituição, nunca a um profissional. */
+/** Bloco 06: por que escolher a UORT. Diferenciais da clínica (os médicos têm blocos próprios). */
 export function Institutional({ esp, imagens }) {
   const itens = [...site.diferenciais];
   const extra = recursosDaEspecialidade(esp);

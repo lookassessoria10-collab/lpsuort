@@ -1,5 +1,7 @@
 import { site } from '../config/site.js';
 import { Conditions } from '../components/Conditions.js';
+import { BotaoFlutuante } from '../components/Cta.js';
+import { DestaqueMedico, Equipe } from '../components/Doctors.js';
 import { Evaluation } from '../components/Evaluation.js';
 import { Faq } from '../components/Faq.js';
 import { FinalCta } from '../components/FinalCta.js';
@@ -9,7 +11,6 @@ import { Hero } from '../components/Hero.js';
 import { sprite } from '../components/Icons.js';
 import { Institutional } from '../components/Institutional.js';
 import { Insurance } from '../components/Insurance.js';
-import { MobileCta } from '../components/MobileCta.js';
 import { analyticsBody, Head } from '../components/Seo.js';
 import { Symptoms } from '../components/Symptoms.js';
 import { Treatments } from '../components/Treatments.js';
@@ -34,22 +35,26 @@ const modoAnalytics = () => (site.analytics.gtmId ? 'gtm' : site.analytics.ga4Id
  *   especialidade: import('../config/especialidades/index.js').Especialidade,
  *   especialidades: import('../config/especialidades/index.js').Especialidade[],
  *   imagens: { hero: any, sintomas: any, estrutura: any },
+ *   equipe: { medicos: any[], meio: any, final: any },
+ *   convenios: { id: string, nome: string, logo: any }[],
  *   css: string,
  *   js: string,
  *   ogImagem: string,
  *   ano: number,
  * }} p
  */
-export function renderEspecialidade({ especialidade, especialidades, imagens, css, js, ogImagem, ano }) {
+export function renderEspecialidade({ especialidade, especialidades, imagens, equipe, convenios, css, js, ogImagem, ano }) {
   const esp = interpolarTudo(especialidade);
-  const ctx = { esp, especialidades, imagens, ano };
+  const ctx = { esp, especialidades, imagens, equipe, convenios, ano };
 
   const corpo = html`${Header(ctx)}
 <main id="conteudo">
 ${Hero(ctx)}
+${Equipe(ctx)}
 ${Symptoms(ctx)}
 ${Conditions(ctx)}
 ${Evaluation(ctx)}
+${DestaqueMedico(ctx)}
 ${Treatments(ctx)}
 ${Institutional(ctx)}
 ${Insurance(ctx)}
@@ -57,7 +62,7 @@ ${Faq(ctx)}
 ${FinalCta(ctx)}
 </main>
 ${Footer(ctx)}
-${MobileCta(ctx)}`;
+${BotaoFlutuante(ctx)}`;
 
   return String(html`<!doctype html>
 <html lang="pt-BR">

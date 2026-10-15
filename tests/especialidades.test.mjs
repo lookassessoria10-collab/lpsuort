@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { before, describe, test } from 'node:test';
-import { build } from '../scripts/build.mjs';
+import { build, conveniosDe, equipeDe, imagensDe } from '../scripts/build.mjs';
 import { lint, TERMOS_PROIBIDOS } from '../scripts/lint.mjs';
 import { especialidades } from '../src/config/especialidades/index.js';
+import { medicos, registro } from '../src/config/medicos.js';
 import { site } from '../src/config/site.js';
 
 /** @type {Map<string, string>} */
@@ -24,6 +25,12 @@ const textoVisivel = (html) =>
     .replace(/&amp;/g, '&')
     .replace(/\s+/g, ' ')
     .trim();
+
+/** Remove os blocos com nomes de médicos (marcados com data-medicos), para checar o texto editorial. */
+const semMedicos = (html) =>
+  html
+    .replace(/<section[^>]*data-medicos[\s\S]*?<\/section>/g, ' ')
+    .replace(/<(a|figure)[^>]*data-medicos[\s\S]*?<\/\1>/g, ' ');
 
 const meta = (html, atributo, nome) =>
   html.match(new RegExp(`<meta ${atributo}="${nome}" content="([^"]*)"`))?.[1];
@@ -50,7 +57,7 @@ describe('build', () => {
     assert.deepEqual(lint().erros, []);
   });
 
-  test('o lint detecta nomes de médicos e promessas', () => {
+  test('o lint detecta nomes de médicos no texto editorial e promessas', () => {
     const detecta = (t) => TERMOS_PROIBIDOS.some(({ padrao }) => padrao.test(t));
     assert.ok(detecta('Agende com o Dr. Fulano'));
     assert.ok(detecta('Tratamento com cura garantida'));
@@ -76,26 +83,70 @@ for (const esp of especialidades) {
       assert.match(h, /<html lang="pt-BR">/);
     });
 
-    test('um único H1 "Especialistas em …" e hierarquia de títulos sem saltos', () => {
+    test('um único H1 sobre a dor, "Especialistas em …" no eyebrow e títulos sem saltos', () => {
       const h = html();
       const h1s = [...h.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/g)];
       assert.equal(h1s.length, 1);
-      assert.equal(textoVisivel(h1s[0][1]), `Especialistas em ${esp.nome}`);
+      const h1 = textoVisivel(h1s[0][1]);
+      assert.ok(esp.regiao.nome.split(' ').some((p) => p.length > 2 && h1.toLowerCase().includes(p)), h1);
+      assert.doesNotMatch(h1, /^Especialistas/);
+      const eyebrow = h.match(/<section class="hero"[\s\S]*?<span class="eyebrow">([\s\S]*?)<\/span>/)[1];
+      assert.match(textoVisivel(eyebrow), new RegExp(`Especialistas em ${esp.nome}$`));
       const niveis = [...h.matchAll(/<h([1-6])[\s>]/g)].map((m) => Number(m[1]));
       niveis.forEach((n, i) => {
         if (i > 0) assert.ok(n - niveis[i - 1] <= 1, `salto de h${niveis[i - 1]} para h${n}`);
       });
     });
 
-    test('imagens com alt e dimensões; pendentes não geram <img>', () => {
+    test('imagens com alt e dimensões; só arquivos existentes geram <img>', () => {
       const imgs = [...html().matchAll(/<img\s([^>]*)>/g)].map((m) => m[1]);
       for (const img of imgs) {
-        assert.ok(attr(img, 'alt')?.trim(), `img sem alt: ${img}`);
+        // Só os avatares do hero são decorativos (alt vazio): o nome está no texto ao lado.
+        if (attr(img, 'class') === 'avatar') assert.equal(attr(img, 'alt'), '', img);
+        else assert.ok(attr(img, 'alt')?.trim(), `img sem alt: ${img}`);
         assert.ok(attr(img, 'width') && attr(img, 'height'), `img sem dimensões: ${img}`);
       }
-      const pendentes = resultado.pendentes.filter((p) => p.startsWith(`${esp.slug}/`)).length;
-      const galeria = (site.galeriaEstrutura ?? []).filter((f) => !resultado.pendentes.includes(f.arquivo)).length;
-      assert.equal(imgs.length, 2 - pendentes + (resultado.pendentes.includes(site.fotoEstrutura.arquivo) ? 0 : 1) + galeria);
+      const imagens = imagensDe(esp);
+      const equipe = equipeDe(esp);
+      const esperadas = new Set(
+        [
+          imagens.hero,
+          imagens.sintomas,
+          imagens.estrutura,
+          ...imagens.galeria,
+          ...equipe.medicos.flatMap((m) => [m.fotos.retrato, m.fotos.avatar ?? m.fotos.retrato]),
+          equipe.meio?.foto,
+          equipe.final?.foto,
+          ...conveniosDe().map((c) => c.logo),
+        ]
+          .filter(Boolean)
+          .map((img) => img.src),
+      );
+      const publicadas = new Set(imgs.map((img) => attr(img, 'src')));
+      assert.deepEqual([...publicadas].sort(), [...esperadas].sort());
+    });
+
+    test('médicos: cartões com CRM, avatares no hero e destaques configurados', () => {
+      const h = html();
+      const cfg = esp.medicos;
+      if (!cfg) {
+        assert.doesNotMatch(h, /data-medicos/, 'página sem médicos configurados não exibe blocos de equipe');
+        return;
+      }
+      const cartoes = [...h.matchAll(/<li class="doc-card">([\s\S]*?)<\/li>/g)].map((m) => textoVisivel(m[1]));
+      assert.equal(cartoes.length, cfg.equipe.length);
+      cfg.equipe.forEach((id, i) => {
+        assert.ok(cartoes[i].includes(medicos[id].nome), medicos[id].nome);
+        assert.ok(cartoes[i].includes(registro(medicos[id])), `${medicos[id].nome} sem CRM no cartão`);
+      });
+      const avatares = h.match(/<a class="hero-team"[\s\S]*?<\/a>/)?.[0] ?? '';
+      assert.equal([...avatares.matchAll(/<img /g)].length, cfg.equipe.length);
+      if (cfg.meio) assert.match(h, new RegExp(`class="doc-spot"[\\s\\S]*?${registro(medicos[cfg.meio.medico])}`));
+      if (cfg.final) assert.match(h, new RegExp(`class="final-doc"[\\s\\S]*?${registro(medicos[cfg.final.medico])}`));
+      // Nenhum médico de outra especialidade aparece na página.
+      for (const [id, m] of Object.entries(medicos)) {
+        if (!cfg.equipe.includes(id)) assert.ok(!textoVisivel(h).includes(m.nome), `${m.nome} não pertence a ${esp.slug}`);
+      }
     });
 
     test('dados estruturados válidos: clínica, página médica, trilha e FAQ', () => {
@@ -127,14 +178,25 @@ for (const esp of especialidades) {
       assert.ok(wa.some((href) => new URL(href).searchParams.get('text') === esp.mensagemWhatsApp));
     });
 
-    test('CTAs rastreáveis em todas as posições estratégicas', () => {
+    test('CTAs rastreáveis em todas as posições estratégicas, um botão por bloco', () => {
       const ctas = links(html()).filter((l) => l.includes('data-cta='));
       const posicoes = new Set(ctas.map((l) => attr(l, 'data-cta-posicao')));
-      for (const p of ['cabecalho', 'hero', 'condicoes', 'tratamentos', 'instituicao', 'convenios', 'faq', 'cta-final', 'barra-fixa', 'rodape']) {
+      for (const p of ['cabecalho', 'hero', 'condicoes', 'tratamentos', 'instituicao', 'convenios', 'faq', 'cta-final', 'flutuante', 'rodape']) {
         assert.ok(posicoes.has(p), `faltando CTA na posição "${p}"`);
       }
-      const hero = ctas.filter((l) => attr(l, 'data-cta-posicao') === 'hero').map((l) => attr(l, 'data-cta'));
-      assert.deepEqual(hero, ['agendar', 'whatsapp']);
+      if (esp.medicos?.meio) assert.ok(posicoes.has('medico'), 'faltando CTA no destaque do médico');
+      // Hero e CTA final: um único botão, que deixa claro que abre o WhatsApp.
+      for (const posicao of ['hero', 'cta-final']) {
+        const botoes = ctas.filter((l) => attr(l, 'data-cta-posicao') === posicao && attr(l, 'class')?.startsWith('btn'));
+        assert.equal(botoes.length, 1, `mais de um botão em "${posicao}"`);
+        assert.equal(attr(botoes[0], 'data-cta-canal'), 'whatsapp');
+      }
+      assert.match(html(), /class="btn btn-primary"[^>]*data-cta-posicao="hero"[^>]*>Agendar pelo WhatsApp/);
+      // Botão flutuante: fixo em todas as páginas, com a mensagem de agendamento da especialidade.
+      const flutuante = links(html()).find((l) => attr(l, 'class') === 'wa-float');
+      assert.ok(flutuante, 'botão flutuante do WhatsApp ausente');
+      assert.equal(new URL(decodificar(attr(flutuante, 'href'))).searchParams.get('text'), esp.mensagemWhatsApp);
+      assert.doesNotMatch(html(), /mobile-cta/);
       // Todo link de conversão (WhatsApp ou telefone) carrega os atributos de rastreamento.
       for (const l of links(html())) {
         const href = attr(l, 'href') ?? '';
@@ -159,18 +221,22 @@ for (const esp of especialidades) {
       }
     });
 
-    test('comunicação institucional: sem nomes de médicos, promessas ou rankings', () => {
-      const texto = textoVisivel(html());
+    test('comunicação responsável: sem promessas, rankings ou nomes de médicos fora dos blocos com CRM', () => {
+      const texto = textoVisivel(semMedicos(html()));
       for (const { padrao, motivo } of TERMOS_PROIBIDOS) {
         if (padrao.source.includes('emerg')) continue; // a razão social contém "Urgência", não "emergência"
         assert.doesNotMatch(texto, padrao, motivo);
       }
-      assert.doesNotMatch(html(), /(Chagas|Sadigursky|Meirelles|Sant.Anna|Cardozo|Tourinho|Brand[ãa]o|Andrade|Tavares)\b/);
+      for (const m of Object.values(medicos)) assert.ok(!texto.includes(m.nome), `${m.nome} fora dos blocos de médicos`);
     });
 
     test('convênios, contatos e endereço oficiais', () => {
-      const texto = textoVisivel(html());
-      for (const c of site.convenios) assert.ok(texto.includes(c), c);
+      const h = html();
+      const texto = textoVisivel(h);
+      const alts = [...h.matchAll(/<ul class="plan-logos">([\s\S]*?)<\/ul>/g)].flatMap((m) =>
+        [...m[1].matchAll(/alt="([^"]*)"/g)].map((a) => decodificar(a[1])),
+      );
+      for (const c of site.convenios) assert.ok(texto.includes(c.nome) || alts.includes(c.nome), c.nome);
       assert.ok(texto.includes(site.contato.telefone.exibicao));
       assert.ok(texto.includes(site.contato.whatsapp.exibicao));
       assert.ok(texto.includes('Centro Empresarial Thomé de Souza'));

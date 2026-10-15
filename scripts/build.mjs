@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { especialidades } from '../src/config/especialidades/index.js';
+import { medicos } from '../src/config/medicos.js';
 import { site } from '../src/config/site.js';
 import { renderEspecialidade } from '../src/layouts/SpecialtyLayout.js';
 import { caminhoAsset, caminhoPagina, urlAbsoluta } from '../src/lib/links.js';
@@ -64,6 +65,52 @@ export function imagensDe(esp) {
   };
 }
 
+/** Um médico com as fotos resolvidas (null nas que ainda não existem em src/assets/img). */
+function medicoComFotos(id) {
+  const m = medicos[id];
+  if (!m) return null;
+  const fotos = Object.fromEntries(Object.entries(m.fotos).map(([chave, foto]) => [chave, resolverImagem(foto.arquivo, foto)]));
+  return { id, ...m, fotos };
+}
+
+/**
+ * Médicos de uma especialidade: cartões da equipe (só quem tem retrato publicado) e os destaques
+ * do meio e do fim da página (só quando a foto escolhida existe).
+ */
+export function equipeDe(esp) {
+  const cfg = esp.medicos;
+  if (!cfg) return { medicos: [], meio: null, final: null };
+  const destaque = (d) => {
+    const m = d && medicoComFotos(d.medico);
+    const foto = m?.fotos[d.foto];
+    return foto ? { ...m, foto } : null;
+  };
+  return {
+    medicos: cfg.equipe.map(medicoComFotos).filter((m) => m?.fotos.retrato),
+    meio: destaque(cfg.meio),
+    final: destaque(cfg.final),
+  };
+}
+
+/** Convênios com a logo resolvida (null = cartão com o nome). */
+export const conveniosDe = () =>
+  site.convenios.map((c) => ({ ...c, logo: resolverImagem(`convenios/${c.id}.webp`, { alt: c.nome }) }));
+
+/** Fotos de médicos e logos configuradas mas ainda sem arquivo. */
+function pendenciasExtras() {
+  const usadas = new Set(
+    especialidades.flatMap((esp) => {
+      const cfg = esp.medicos;
+      if (!cfg) return [];
+      const fotos = cfg.equipe.flatMap((id) => [medicos[id]?.fotos.retrato, medicos[id]?.fotos.avatar]);
+      for (const d of [cfg.meio, cfg.final]) if (d) fotos.push(medicos[d.medico]?.fotos[d.foto]);
+      return fotos.filter(Boolean).map((f) => f.arquivo);
+    }),
+  );
+  const logos = site.convenios.map((c) => `convenios/${c.id}.webp`);
+  return [...usadas, ...logos].filter((arquivo) => !fs.existsSync(path.join(ASSETS, 'img', arquivo)));
+}
+
 function copiarPasta(origem, destino) {
   if (!fs.existsSync(origem)) return;
   fs.mkdirSync(destino, { recursive: true });
@@ -90,6 +137,7 @@ export function build({ silencioso = false } = {}) {
 
   const paginas = [];
   const pendentes = [];
+  const convenios = conveniosDe();
 
   for (const esp of especialidades) {
     const imagens = imagensDe(esp);
@@ -104,6 +152,8 @@ export function build({ silencioso = false } = {}) {
       especialidade: esp,
       especialidades,
       imagens,
+      equipe: equipeDe(esp),
+      convenios,
       css,
       js,
       ogImagem: urlAbsoluta(og),
@@ -121,6 +171,7 @@ export function build({ silencioso = false } = {}) {
   for (const foto of site.galeriaEstrutura ?? []) {
     if (!galeria.some((src) => src.endsWith(foto.arquivo))) pendentes.push(foto.arquivo);
   }
+  pendentes.push(...pendenciasExtras());
 
   for (const pasta of ['brand', 'img', 'og']) copiarPasta(path.join(ASSETS, pasta), path.join(base, 'assets', pasta));
 
@@ -136,7 +187,8 @@ ${paginas.map((p) => `  <url><loc>${urlAbsoluta(p.caminho)}</loc><lastmod>${hoje
   for (const p of paginas) log(`  ${p.caminho.padEnd(32)} ${(p.bytes / 1024).toFixed(1).padStart(6)} KB`);
   log(`  ${`${site.basePath}/sitemap.xml`.padEnd(32)}`);
   if (pendentes.length) {
-    log(`\n  Imagens pendentes (a página usa a composição de marca até o arquivo existir em src/assets/img/):`);
+    log(`\n  Imagens pendentes em src/assets/img/ (até o arquivo existir, a página usa a composição de marca,`);
+    log(`  o cartão com o nome do convênio ou omite a foto do médico):`);
     for (const p of pendentes) log(`   - ${p}`);
   }
   log('');

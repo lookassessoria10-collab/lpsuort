@@ -11,8 +11,9 @@ export default {
   },
 
   hero: {
-    titulo: 'Especialistas\nem **Quadril**',
-    subtitulo: 'Avaliação e tratamento para dor, perda de mobilidade e alterações articulares do quadril.',
+    titulo: 'Dor no quadril\n**ao caminhar ou levantar?**',
+    subtitulo:
+      'Avaliação com especialistas em quadril para identificar a causa da dor e da perda de mobilidade e indicar o tratamento adequado.',
     imagem: {
       arquivo: 'hero.webp',
       alt: 'Ortopedista da UORT flexionando a perna de uma paciente deitada na maca para avaliar o quadril',
@@ -152,6 +153,12 @@ export default {
   ctaFinal: {
     titulo: 'Seu quadril merece **atenção.**',
     texto: 'Conte com a UORT para avaliar a dor no quadril e encontrar o cuidado adequado para o seu caso.',
+  },
+
+  medicos: {
+    equipe: ['alexandre-meirelles', 'alan-chagas'],
+    meio: { medico: 'alexandre-meirelles', foto: 'consulta' },
+    final: { medico: 'alan-chagas', foto: 'consultorio' },
   },
 
   mensagemWhatsApp: 'Olá! Vim pela página de Quadril da UORT e gostaria de agendar uma consulta.',

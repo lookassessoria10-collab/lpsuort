@@ -21,9 +21,10 @@ padrão dos outros projetos UORT da agência (estático, publicado na Vercel).
 npm run dev      # gera o site e serve em http://localhost:4321 (refaz o build quando src/ muda)
 npm run build    # gera dist/especialidades/<slug>/index.html, assets e sitemap.xml
 npm run lint     # valida o conteúdo (SEO, estrutura, termos proibidos, recursos, pendências)
-npm test         # 50 testes sobre o HTML gerado (SEO, CTAs, WhatsApp, links, JSON-LD, conteúdo)
+npm test         # 55 testes sobre o HTML gerado (SEO, CTAs, WhatsApp, médicos, links, JSON-LD, conteúdo)
 npm run check    # lint + build + testes
 npm run imagens  # otimiza imagens e gera as imagens de compartilhamento (requer: npm i -D sharp)
+npm run imagens -- equipe convenios   # só os grupos indicados (especialidades, institucional, equipe, convenios)
 ```
 
 Requer Node.js 20 ou superior.
@@ -35,6 +36,7 @@ src/
   config/
     site.js                     dados institucionais: contatos, endereço, convênios, analytics, privacidade
     recursos.js                 recursos terapêuticos confirmados na clínica (ondas de choque, SIS…)
+    medicos.js                  médicos: nome, CRM, RQE, área, formação e fotos
     especialidades/
       index.js                  registro e tipo (JSDoc) de uma especialidade
       joelho.js · coluna.js · ombro.js · quadril.js · pe-e-tornozelo.js
@@ -42,6 +44,7 @@ src/
   components/
     Header.js                   marca, menu compacto, CTA
     Hero.js                     bloco 01
+    Doctors.js                  bloco 01b (equipe), 04b (destaque), avatares do hero e foto do CTA final
     Symptoms.js                 bloco 02
     Conditions.js               bloco 03
     Evaluation.js               bloco 04
@@ -51,13 +54,12 @@ src/
     Faq.js                      bloco 08
     FinalCta.js                 bloco 09
     Footer.js                   bloco 10
-    MobileCta.js                CTA fixo no celular
-    Cta.js                      botões de conversão (agendar, WhatsApp, telefone) com rastreamento
+    Cta.js                      botões de conversão (agendar, WhatsApp, telefone, flutuante) com rastreamento
     Seo.js                      meta tags, Open Graph, canonical, JSON-LD, GTM/GA4
     Media.js · Icons.js         imagens (com fallback) e ícones lineares
   lib/                          template HTML com escape automático; links e mensagens de WhatsApp
   styles/especialidades.css     estilos mobile-first (inline no build)
-  scripts/especialidades.js     eventos, menu, UTM/gclid, CTA fixo (inline no build)
+  scripts/especialidades.js     eventos, menu, UTM/gclid (inline no build)
   assets/                       logo, imagens publicadas, imagens de compartilhamento (og)
 imagens-originais/              originais usados pelo npm run imagens
 scripts/                        build, dev, lint, otimização de imagens
@@ -67,17 +69,41 @@ docs/IMAGENS.md                 situação, especificações e briefing das imag
 
 ## Blocos (idênticos nas cinco páginas)
 
-1. **Hero**: eyebrow "UORT — Especialidade", H1 "Especialistas em [Especialidade]", subtítulo e dois CTAs.
+1. **Hero**: eyebrow "UORT — Especialistas em [Especialidade]", H1 com a dor do paciente ("Sofrendo com dor no
+   joelho?"), subtítulo, um único botão "Agendar pelo WhatsApp" e os rostos da equipe com os nomes.
+   1b. **Equipe** (quando há médicos): cartões com foto, nome, área e CRM, lado a lado.
 2. **Sintomas**: título, quatro situações com ícones e cartão sobre a imagem.
 3. **Condições**: 4 a 6 cartões com nome e descrição.
 4. **Como funciona a avaliação**: trilha de quatro etapas, com aviso de que o fluxo varia por paciente.
+   4b. **Conheça o especialista** (opcional): outra foto de um dos médicos, com formação e CRM.
 5. **Tratamentos**: lista editorial. Recursos da clínica recebem o selo "Disponível na UORT".
 6. **Por que escolher a UORT?**: diferenciais institucionais, cartão de localização e a galeria "Conheça a
    clínica", com fotos reais das salas.
-7. **Convênios e facilidades**: painel compacto com convênios, contatos e CTA.
+7. **Convênios e facilidades**: logos dos convênios (cartão com o nome enquanto a logo não existe), contatos e CTA.
 8. **Perguntas frequentes**: accordion nativo (`<details>`), com links para especialidades relacionadas.
-9. **CTA final**: azul-petróleo, com texto adaptado à especialidade.
+9. **CTA final**: azul-petróleo, com texto adaptado à especialidade, um único botão e, opcionalmente, a foto de
+   um médico.
 10. **Rodapé**: contatos, endereço, especialidades, links institucionais e privacidade.
+
+Em todas as páginas, o **botão flutuante do WhatsApp** fica fixo no canto inferior direito (só o ícone no
+celular; ícone e "Agendar pelo WhatsApp" no desktop).
+
+## Médicos
+
+Os dados ficam em `src/config/medicos.js` (fonte: página "Especialistas" do site oficial) e cada especialidade
+escolhe quem aparece em `medicos`:
+
+```js
+medicos: {
+  equipe: ['alexandre-meirelles', 'alan-chagas'],             // cartões e avatares do hero
+  meio: { medico: 'alexandre-meirelles', foto: 'consulta' },  // destaque depois da avaliação
+  final: { medico: 'alan-chagas', foto: 'consultorio' },      // foto no CTA final
+},
+```
+
+Todo médico exibido tem o CRM no cartão (Resolução CFM nº 2.336/2023); o lint exige o CRM e avisa enquanto o
+RQE não for informado. Fora desses blocos, o texto das páginas continua sem nomes de médicos. Pé e Tornozelo
+ainda não tem fotos e é publicada sem os blocos de equipe.
 
 ## Como adicionar uma nova especialidade
 
@@ -95,13 +121,15 @@ docs/IMAGENS.md                 situação, especificações e briefing das imag
 
 ## Conversão e monitoramento
 
-- **Agende sua consulta** abre o WhatsApp oficial com a mensagem de agendamento da especialidade, por exemplo:
+- **Agendar pelo WhatsApp** (botão principal de cada bloco e botão flutuante) abre o WhatsApp oficial com a
+  mensagem de agendamento da especialidade, por exemplo:
   "Olá! Vim pela página de Joelho da UORT e gostaria de agendar uma consulta."
-  Para usar outro canal (agendamento online), configure `site.agendamento = { canal: 'url', url: '…' }`.
-- **Fale no WhatsApp** e **Consulte a disponibilidade** usam mensagens de dúvida e de convênio, geradas a
-  partir do nome da especialidade.
-- CTAs presentes em: cabeçalho, hero (2), condições, tratamentos, instituição, convênios, FAQ, CTA final,
-  rodapé e barra fixa no celular. A barra aparece só quando os botões do hero e do CTA final estão fora da tela.
+  Para usar outro canal (agendamento online), configure `site.agendamento = { canal: 'url', url: '…' }`; o
+  botão principal passa a se chamar "Agende sua consulta" e o flutuante continua no WhatsApp.
+- **Tire sua dúvida no WhatsApp** (FAQ) e **Consultar meu convênio** (com o ícone do WhatsApp) usam mensagens de
+  dúvida e de convênio, geradas a partir do nome da especialidade.
+- Um botão por bloco: cabeçalho, hero, condições, destaque do médico, tratamentos, instituição, convênios, FAQ,
+  CTA final, rodapé e o botão flutuante (posição `flutuante`).
 
 **Eventos** (um por clique, com proteção contra clique duplo):
 

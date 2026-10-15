@@ -11,9 +11,9 @@ export default {
   },
 
   hero: {
-    titulo: 'Especialistas\nem **Coluna**',
+    titulo: 'Dor na coluna\n**atrapalhando sua rotina?**',
     subtitulo:
-      'Avaliação e tratamento para dores e alterações das regiões cervical e lombar que interferem na sua rotina.',
+      'Avaliação especializada para dores nas costas e no pescoço, com investigação da causa e tratamento indicado para cada caso.',
     imagem: {
       arquivo: 'hero.webp',
       alt: 'Ortopedista da UORT avaliando a região lombar de um paciente sentado na maca',
@@ -154,6 +154,11 @@ export default {
   ctaFinal: {
     titulo: 'Sua coluna merece **atenção.**',
     texto: 'Conte com a UORT para investigar a origem da dor nas costas ou no pescoço e encontrar o cuidado adequado.',
+  },
+
+  // A CONFIRMAR: o site oficial lista também o Dr. Dayan Esteves em coluna (não há foto dele no projeto).
+  medicos: {
+    equipe: ['sergio-murilo-andrade'],
   },
 
   mensagemWhatsApp: 'Olá! Vim pela página de Coluna da UORT e gostaria de agendar uma consulta.',

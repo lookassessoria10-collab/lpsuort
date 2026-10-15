@@ -17,14 +17,26 @@ const avisoCanal = (canal) =>
     : '';
 
 /**
- * "Agende sua consulta".
- * @param {{ esp: any, posicao: string, rotulo?: string, variante?: 'padrao' | 'compacto' | 'claro', classe?: string }} p
+ * Botão principal de cada bloco. Com o agendamento pelo WhatsApp (padrão), diz isso no rótulo e no
+ * ícone, para o destino ficar claro: "Agendar pelo WhatsApp".
+ * @param {{ esp: any, posicao: string, rotulo?: any, variante?: 'padrao' | 'compacto' | 'claro', classe?: string }} p
  */
-export function BotaoAgendar({ esp, posicao, rotulo = 'Agende sua consulta', variante = 'padrao', classe = '' }) {
+export function BotaoAgendar({ esp, posicao, rotulo, variante = 'padrao', classe = '' }) {
   const { href, canal } = linkAgendamento(esp);
-  const seta = variante === 'compacto' ? icon('right') : html`<span class="arrow">${icon('arrow')}</span>`;
+  const whatsapp = canal === 'whatsapp';
+  const texto = rotulo ?? (whatsapp ? 'Agendar pelo WhatsApp' : 'Agende sua consulta');
+  const marca = whatsapp ? icon('wa') : icon(variante === 'compacto' ? 'right' : 'arrow');
+  const seta = variante === 'compacto' ? marca : html`<span class="arrow${whatsapp ? ' arrow-wa' : ''}">${marca}</span>`;
   const cls = ['btn', variante === 'claro' ? 'btn-light' : 'btn-primary', classe].filter(Boolean).join(' ');
-  return html`<a class="${cls}" href="${href}" target="_blank" rel="noopener"${rastreio('agendar', posicao, canal)}>${rotulo}${seta}${avisoCanal(canal)}</a>`;
+  return html`<a class="${cls}" href="${href}" target="_blank" rel="noopener"${rastreio('agendar', posicao, canal)}>${texto}${seta}${avisoCanal(canal)}</a>`;
+}
+
+/** Botão flutuante do WhatsApp, fixo no canto inferior direito em todas as páginas. */
+export function BotaoFlutuante({ esp }) {
+  const href = linkWhatsApp(mensagens(esp).agendamento);
+  return html`<a class="wa-float" href="${href}" target="_blank" rel="noopener"${rastreio('whatsapp', 'flutuante', 'whatsapp')}>
+  <span class="wa-float-label">Agendar pelo WhatsApp</span><span class="wa-float-icon" aria-hidden="true">${icon('wa')}</span><span class="sr-only"> (abre o WhatsApp)</span>
+</a>`;
 }
 
 /**

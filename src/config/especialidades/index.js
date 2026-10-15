@@ -7,6 +7,15 @@
  *   \n          → quebra de linha (apenas em títulos)
  *   {prontoAtendimento} → horário do Pronto Atendimento definido em site.js
  *
+ * Título do hero (H1): pergunta curta sobre a dor do paciente, citando a região do corpo
+ * (ex.: "Sofrendo com **dor no joelho?**"). "Especialistas em [Especialidade]" fica no eyebrow.
+ *
+ * Médicos (opcional): ids de src/config/medicos.js.
+ *   equipe → cartões logo depois do hero e avatares no hero, nesta ordem
+ *   meio   → destaque de um médico depois de "Como funciona a avaliação" (foto: chave em medico.fotos)
+ *   final  → foto de um médico no CTA final
+ * Sem `medicos`, a página é publicada sem esses blocos (ex.: pé e tornozelo, sem fotos aprovadas).
+ *
  * @typedef {{ arquivo: string, alt: string, foco?: string }} Imagem
  * @typedef {'conservador' | 'reabilitacao' | 'procedimento' | 'cirurgico'} TipoTratamento
  * @typedef {{
@@ -31,6 +40,11 @@
  *   instituicao: { introducao: string },
  *   faq: { pergunta: string, resposta: string }[],
  *   ctaFinal: { titulo: string, texto: string },
+ *   medicos?: {
+ *     equipe: string[],
+ *     meio?: { medico: string, foto: string },
+ *     final?: { medico: string, foto: string },
+ *   },
  *   mensagemWhatsApp: string,
  *   relacionadas: string[],
  * }} Especialidade

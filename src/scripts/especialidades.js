@@ -4,7 +4,7 @@
  * 2. Abertura de perguntas frequentes.
  * 3. Menu "Especialidades" do cabeçalho (fecha com clique fora ou Esc).
  * 4. Preservação de UTM/gclid nos links internos entre especialidades.
- * 5. Exibição do CTA fixo no celular.
+ * O botão flutuante do WhatsApp é só HTML e CSS: fica sempre visível, sem script.
  */
 (() => {
   if (window.__uortEspecialidades) return;
@@ -93,25 +93,5 @@
       for (const [k, v] of Object.entries(atribuicao)) if (!url.searchParams.has(k)) url.searchParams.set(k, v);
       link.setAttribute('href', url.pathname + url.search + url.hash);
     });
-  }
-
-  // 5. CTA fixo no celular: visível quando os botões do hero e o CTA final estão fora da tela
-  const barra = document.querySelector('[data-mobile-cta]');
-  const acoesHero = document.querySelector('.hero .actions');
-  const ctaFinal = document.getElementById('agendar');
-  if (barra && acoesHero && ctaFinal && 'IntersectionObserver' in window) {
-    let heroVisivel = true;
-    let finalVisivel = false;
-    const atualizar = () => barra.classList.toggle('is-visible', !heroVisivel && !finalVisivel);
-    new IntersectionObserver(([e]) => {
-      heroVisivel = e.isIntersecting;
-      atualizar();
-    }).observe(acoesHero);
-    new IntersectionObserver(([e]) => {
-      finalVisivel = e.isIntersecting;
-      atualizar();
-    }).observe(ctaFinal);
-  } else if (barra) {
-    barra.classList.add('is-visible');
   }
 })();

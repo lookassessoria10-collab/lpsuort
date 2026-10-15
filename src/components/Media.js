@@ -8,11 +8,12 @@ import { attrs, html, raw } from '../lib/html.js';
  * Imagem com dimensões explícitas (evita deslocamento de layout).
  * O enquadramento vai em variáveis CSS (--foco e, se houver, --foco-desktop) lidas pela folha de estilo.
  * @param {ImagemResolvida} img
- * @param {{ prioridade?: boolean }} [opcoes]
+ * @param {{ prioridade?: boolean, classe?: string }} [opcoes]
  */
-export function Imagem(img, { prioridade = false } = {}) {
+export function Imagem(img, { prioridade = false, classe } = {}) {
   const foco = [img.foco && `--foco:${img.foco}`, img.focoDesktop && `--foco-desktop:${img.focoDesktop}`].filter(Boolean);
   return html`<img${attrs({
+    class: classe,
     src: img.src,
     width: img.width,
     height: img.height,

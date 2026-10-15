@@ -12,6 +12,7 @@ export const ICONES = {
   arrow: linha('<path d="M7 17 17 7M9 7h8v8"/>', 2),
   right: linha('<path d="M4 12h15M13 6l6 6-6 6"/>', 1.8),
   chevron: linha('<path d="m6 9 6 6 6-6"/>', 1.8),
+  check: linha('<path d="m5 12.5 4.5 4.5L19 7.5"/>', 1.8),
   wa:
     '<path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3Z"/>' +
     '<path fill="currentColor" d="M16.2 14c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.5.1l-.7.9c-.1.1-.3.2-.5.1a6 6 0 0 1-3-2.6c-.2-.4.2-.4.6-1.2.1-.1 0-.3 0-.4l-.7-1.6c-.2-.4-.4-.4-.5-.4h-.4a.9.9 0 0 0-.7.3 2.7 2.7 0 0 0-.8 2c0 1.2.8 2.3 1 2.5.1.1 1.7 2.6 4.1 3.6 1.5.6 2.1.7 2.9.6.5-.1 1.3-.6 1.5-1.1.2-.5.2-1 .1-1.1l-.4-.3Z"/>',

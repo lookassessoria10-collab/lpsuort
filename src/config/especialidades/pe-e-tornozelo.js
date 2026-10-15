@@ -11,8 +11,9 @@ export default {
   },
 
   hero: {
-    titulo: 'Especialistas em\n**Pé e Tornozelo**',
-    subtitulo: 'Avaliação e tratamento para dores, lesões e alterações que prejudicam o caminhar.',
+    titulo: 'Dor no pé ou no tornozelo\n**a cada passo?**',
+    subtitulo:
+      'Avaliação e tratamento para dores, entorses e alterações que prejudicam o caminhar, com o cuidado indicado para cada caso.',
     imagem: {
       arquivo: 'hero.webp',
       alt: 'Ortopedista da UORT examinando o tornozelo de uma paciente sentada na maca',
