@@ -44,7 +44,7 @@ src/
   components/
     Header.js                   marca, menu compacto, CTA
     Hero.js                     bloco 01
-    Doctors.js                  bloco 01b (equipe), 04b (destaque), avatares do hero e foto do CTA final
+    Doctors.js                  bloco 01b (equipe), 04b (banner dos especialistas), avatares do hero e médicos do CTA final
     Symptoms.js                 bloco 02
     Conditions.js               bloco 03
     Evaluation.js               bloco 04
@@ -75,14 +75,15 @@ docs/IMAGENS.md                 situação, especificações e briefing das imag
 2. **Sintomas**: título, quatro situações com ícones e cartão sobre a imagem.
 3. **Condições**: 4 a 6 cartões com nome e descrição.
 4. **Como funciona a avaliação**: trilha de quatro etapas, com aviso de que o fluxo varia por paciente.
-   4b. **Conheça o especialista** (opcional): outra foto de um dos médicos, com formação e CRM.
+   4b. **Conheça os especialistas**: um slide por médico (outra foto, formação e CRM). Com mais de um médico,
+   vira um banner rotativo, com os nomes de todos sempre visíveis acima.
 5. **Tratamentos**: lista editorial. Recursos da clínica recebem o selo "Disponível na UORT".
 6. **Por que escolher a UORT?**: diferenciais institucionais, cartão de localização e a galeria "Conheça a
    clínica", com fotos reais das salas.
 7. **Convênios e facilidades**: logos dos convênios (cartão com o nome enquanto a logo não existe), contatos e CTA.
 8. **Perguntas frequentes**: accordion nativo (`<details>`), com links para especialidades relacionadas.
-9. **CTA final**: azul-petróleo, com texto adaptado à especialidade, um único botão e, opcionalmente, a foto de
-   um médico.
+9. **CTA final**: azul-petróleo, com texto adaptado à especialidade, um único botão e os médicos da página
+   (todos, com avatar, nome e CRM; ou a foto "final" quando há um só).
 10. **Rodapé**: contatos, endereço, especialidades, links institucionais e privacidade.
 
 Em todas as páginas, o **botão flutuante do WhatsApp** fica fixo no canto inferior direito (só o ícone no
@@ -90,16 +91,19 @@ celular; ícone e "Agendar pelo WhatsApp" no desktop).
 
 ## Médicos
 
-Os dados ficam em `src/config/medicos.js` (fonte: página "Especialistas" do site oficial) e cada especialidade
-escolhe quem aparece em `medicos`:
+Os dados e as fotos ficam em `src/config/medicos.js` (fonte: página "Especialistas" do site oficial). Cada
+especialidade só lista quem aparece, de preferência em ordem alfabética:
 
 ```js
-medicos: {
-  equipe: ['alexandre-meirelles', 'alan-chagas'],             // cartões e avatares do hero
-  meio: { medico: 'alexandre-meirelles', foto: 'consulta' },  // destaque depois da avaliação
-  final: { medico: 'alan-chagas', foto: 'consultorio' },      // foto no CTA final
-},
+medicos: ['alan-chagas', 'alexandre-meirelles'],
 ```
+
+**Equilíbrio entre os médicos.** Numa página com mais de um médico, todos aparecem do mesmo jeito, no mesmo
+tamanho e o mesmo número de vezes: avatar no hero, cartão na equipe, botão com o nome e slide em "Conheça os
+especialistas" e avatar no CTA final. O banner começa num médico sorteado a cada visita e troca a cada 7 s
+(pausa com o mouse; para quando a pessoa escolhe um médico). Cada foto tem uma função fixa em `medicos.js`
+(`retrato`, `avatar`, `destaque`, `final`); o lint avisa se só parte dos médicos de uma página tiver foto de
+destaque ou formação, e um teste confere que cada um aparece o mesmo número de vezes.
 
 Todo médico exibido tem o CRM no cartão (Resolução CFM nº 2.336/2023); o lint exige o CRM e avisa enquanto o
 RQE não for informado. Fora desses blocos, o texto das páginas continua sem nomes de médicos. Pé e Tornozelo

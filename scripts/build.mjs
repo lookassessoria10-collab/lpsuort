@@ -74,21 +74,25 @@ function medicoComFotos(id) {
 }
 
 /**
- * Médicos de uma especialidade: cartões da equipe (só quem tem retrato publicado) e os destaques
- * do meio e do fim da página (só quando a foto escolhida existe).
+ * Médicos de uma especialidade, sempre tratados por igual (só entra quem tem retrato publicado):
+ *   medicos    cartões da equipe e avatares do hero
+ *   destaques  "Conheça os especialistas": um slide por médico, com a foto de destaque (ou o retrato).
+ *              Só existe se algum médico tiver foto de destaque ou formação para mostrar.
+ *   final      CTA final: a foto "final" do médico único da página ou, com vários, o avatar de cada um
  */
 export function equipeDe(esp) {
-  const cfg = esp.medicos;
-  if (!cfg) return { medicos: [], meio: null, final: null };
-  const destaque = (d) => {
-    const m = d && medicoComFotos(d.medico);
-    const foto = m?.fotos[d.foto];
-    return foto ? { ...m, foto } : null;
-  };
+  const medicos = (esp.medicos ?? []).map(medicoComFotos).filter((m) => m?.fotos.retrato);
+  const comFoto = (m, foto) => ({ ...m, foto });
+  const temDestaque = medicos.some((m) => m.fotos.destaque || m.formacao.length);
+  const unico = medicos.length === 1 ? medicos[0] : null;
   return {
-    medicos: cfg.equipe.map(medicoComFotos).filter((m) => m?.fotos.retrato),
-    meio: destaque(cfg.meio),
-    final: destaque(cfg.final),
+    medicos,
+    destaques: temDestaque ? medicos.map((m) => comFoto(m, m.fotos.destaque ?? m.fotos.retrato)) : [],
+    final: unico
+      ? unico.fotos.final
+        ? [comFoto(unico, unico.fotos.final)]
+        : []
+      : medicos.map((m) => comFoto(m, m.fotos.avatar ?? m.fotos.retrato)),
   };
 }
 
@@ -99,13 +103,10 @@ export const conveniosDe = () =>
 /** Fotos de médicos e logos configuradas mas ainda sem arquivo. */
 function pendenciasExtras() {
   const usadas = new Set(
-    especialidades.flatMap((esp) => {
-      const cfg = esp.medicos;
-      if (!cfg) return [];
-      const fotos = cfg.equipe.flatMap((id) => [medicos[id]?.fotos.retrato, medicos[id]?.fotos.avatar]);
-      for (const d of [cfg.meio, cfg.final]) if (d) fotos.push(medicos[d.medico]?.fotos[d.foto]);
-      return fotos.filter(Boolean).map((f) => f.arquivo);
-    }),
+    especialidades
+      .flatMap((esp) => esp.medicos ?? [])
+      .flatMap((id) => Object.values(medicos[id]?.fotos ?? {}))
+      .map((f) => f.arquivo),
   );
   const logos = site.convenios.map((c) => `convenios/${c.id}.webp`);
   return [...usadas, ...logos].filter((arquivo) => !fs.existsSync(path.join(ASSETS, 'img', arquivo)));

@@ -339,6 +339,33 @@ img[style*="--foco"] { object-position: var(--foco); }
   .doc-spot-media .photo { max-height: none; }
   .doc-spot-copy { padding: 0; }
 }
+/* Vários médicos: banner rotativo, um slide por médico, e os nomes de todos sempre visíveis */
+.doc-spot-head { display: grid; gap: 14px; justify-items: start; margin-bottom: 28px; }
+.doc-tabs { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.doc-tab {
+  display: inline-flex; align-items: center; gap: 10px; padding: 5px 16px 5px 5px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink);
+  font-size: .9rem; font-weight: 500; line-height: 1.2; text-decoration: none;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.doc-tab .avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; background: var(--pale); }
+.doc-tab:hover { border-color: var(--teal); }
+.doc-tab[aria-current="true"] { background: var(--deep); border-color: var(--deep); color: #fff; }
+.doc-track {
+  position: relative; list-style: none; margin: 0; padding: 0;
+  display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 16px;
+  overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none;
+}
+.doc-track::-webkit-scrollbar { display: none; }
+.doc-track > .doc-spot-box { scroll-snap-align: start; }
+.doc-spot-name { font: 400 clamp(1.9rem, 3.4vw, 2.8rem)/1.06 var(--display); letter-spacing: -0.03em; }
+.doc-spot-name b { font-weight: 600; color: var(--teal); }
+.is-carousel { padding-top: calc(var(--section) * .4); }
+@media (min-width: 861px) {
+  .doc-spot-head { grid-template-columns: 1fr auto; align-items: end; column-gap: 32px; margin-bottom: 32px; }
+  .doc-spot-head .eyebrow { grid-column: 1 / -1; }
+  .doc-tabs { justify-content: flex-end; }
+}
 
 /* ---------- 05 · Tratamentos ---------- */
 .care { background: var(--mist); }
@@ -533,6 +560,17 @@ img[style*="--foco"] { object-position: var(--foco); }
 .final-doc .photo img { width: 100%; height: 100%; object-fit: cover; object-position: var(--foco, 50% 25%); }
 .final-doc figcaption { display: grid; gap: 3px; color: var(--petrol-soft); font-size: .86rem; line-height: 1.45; }
 .final-doc strong { color: #fff; font: 500 1.05rem/1.3 var(--display); }
+/* Vários médicos: todos com o mesmo tamanho */
+.final-team { display: grid; gap: 14px; align-content: start; }
+.final-team-title { font: 500 .7rem/1 var(--body); letter-spacing: .2em; text-transform: uppercase; color: var(--cyan); }
+.final-team ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.final-team li {
+  display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: center; padding: 10px 16px 10px 10px;
+  border-radius: 18px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1);
+}
+.final-team .avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: rgba(255, 255, 255, .06); }
+.final-team strong { display: block; color: #fff; font: 500 1rem/1.3 var(--display); }
+.final-team span { color: var(--petrol-soft); font-size: .82rem; }
 
 @media (min-width: 861px) {
   .final .wrap { grid-template-columns: 1.3fr 1fr; gap: 64px; align-items: center; }
@@ -540,6 +578,7 @@ img[style*="--foco"] { object-position: var(--foco); }
   .final-actions .btn { min-width: 300px; }
   .final.has-doc .final-actions { justify-self: start; }
   .final-doc { grid-template-columns: 1fr; gap: 16px; justify-self: end; width: min(100%, 340px); }
+  .final-team { justify-self: end; width: min(100%, 380px); }
   .final-doc .photo { border-radius: 24px; }
 }
 

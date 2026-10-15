@@ -155,11 +155,8 @@ export default {
     texto: 'Conte com a UORT para avaliar a dor no quadril e encontrar o cuidado adequado para o seu caso.',
   },
 
-  medicos: {
-    equipe: ['alexandre-meirelles', 'alan-chagas'],
-    meio: { medico: 'alexandre-meirelles', foto: 'consulta' },
-    final: { medico: 'alan-chagas', foto: 'consultorio' },
-  },
+  // Ordem alfabética.
+  medicos: ['alan-chagas', 'alexandre-meirelles'],
 
   mensagemWhatsApp: 'Olá! Vim pela página de Quadril da UORT e gostaria de agendar uma consulta.',
 

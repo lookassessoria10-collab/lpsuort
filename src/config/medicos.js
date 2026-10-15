@@ -15,13 +15,19 @@
  *   rqe       número do RQE (vazio enquanto não confirmado; o lint avisa)
  *   area      área de atuação, como no site oficial
  *   formacao  2 a 4 itens factuais do currículo publicado (sem superlativos)
- *   fotos     retrato (cartão 4:5), avatar (círculo do hero, quadrado) e fotos extras com nome livre,
- *             usadas nos destaques do meio e do fim da página. Arquivos em src/assets/img/.
+ *   fotos     arquivos em src/assets/img/, cada um com uma função fixa:
+ *             retrato   cartão da equipe (4:5)
+ *             avatar    círculo do hero e do CTA final (quadrado)
+ *             destaque  slide em "Conheça os especialistas" (4:5); sem ela, o slide usa o retrato
+ *             final     foto do CTA final, usada só quando o médico é o único da página
  *
- * @typedef {{ arquivo: string, alt: string, foco?: string, legenda?: string }} FotoMedico
+ * Equilíbrio: numa página com mais de um médico, todos aparecem do mesmo jeito (cartão, avatar,
+ * slide e CTA final). Por isso vale ter `destaque` para todos ou para nenhum; o lint avisa.
+ *
+ * @typedef {{ arquivo: string, alt: string, foco?: string }} FotoMedico
  * @typedef {{
  *   nome: string, crm: string, rqe: string, area: string, formacao: string[],
- *   fotos: { retrato: FotoMedico, avatar: FotoMedico, [extra: string]: FotoMedico },
+ *   fotos: { retrato: FotoMedico, avatar: FotoMedico, destaque?: FotoMedico, final?: FotoMedico },
  * }} Medico
  */
 
@@ -40,6 +46,11 @@ export const medicos = {
     fotos: {
       retrato: { arquivo: 'equipe/david-sadigursky.webp', alt: 'Dr. David Sadigursky sentado à mesa do consultório' },
       avatar: { arquivo: 'equipe/david-sadigursky-avatar.webp', alt: '' },
+      destaque: {
+        arquivo: 'equipe/david-sadigursky-consultorio.webp',
+        alt: 'Dr. David Sadigursky de blazer cinza, na porta de um consultório da UORT',
+        foco: '50% 20%',
+      },
     },
   },
 
@@ -56,7 +67,7 @@ export const medicos = {
     fotos: {
       retrato: { arquivo: 'equipe/luis-claudio-chagas.webp', alt: 'Dr. Luís Cláudio Chagas de terno, em ambiente com painel de madeira' },
       avatar: { arquivo: 'equipe/luis-claudio-chagas-avatar.webp', alt: '' },
-      estudio: { arquivo: 'equipe/luis-claudio-chagas-estudio.webp', alt: 'Dr. Luís Cláudio Chagas sorrindo, de blazer cinza', foco: '50% 20%' },
+      destaque: { arquivo: 'equipe/luis-claudio-chagas-estudio.webp', alt: 'Dr. Luís Cláudio Chagas sorrindo, de blazer cinza', foco: '50% 20%' },
     },
   },
 
@@ -73,7 +84,8 @@ export const medicos = {
     fotos: {
       retrato: { arquivo: 'equipe/roney-santanna.webp', alt: 'Dr. Roney Sant’Anna de jaleco branco, sentado' },
       avatar: { arquivo: 'equipe/roney-santanna-avatar.webp', alt: '' },
-      estudio: { arquivo: 'equipe/roney-santanna-estudio.webp', alt: 'Dr. Roney Sant’Anna de jaleco, em retrato de estúdio', foco: '50% 20%' },
+      // A CONFIRMAR: original de só 365 px; pedir uma versão maior à UORT.
+      destaque: { arquivo: 'equipe/roney-santanna-estudio.webp', alt: 'Dr. Roney Sant’Anna de jaleco, em retrato de estúdio', foco: '50% 20%' },
     },
   },
 
@@ -102,12 +114,12 @@ export const medicos = {
     fotos: {
       retrato: { arquivo: 'equipe/nivaldo-cardozo.webp', alt: 'Dr. Nivaldo Cardozo Filho de jaleco em um consultório da UORT' },
       avatar: { arquivo: 'equipe/nivaldo-cardozo-avatar.webp', alt: '' },
-      consulta: {
+      destaque: {
         arquivo: 'equipe/nivaldo-cardozo-consulta.webp',
         alt: 'Dr. Nivaldo Cardozo Filho examinando o ombro de um paciente',
         foco: '40% 50%',
       },
-      consultorio: { arquivo: 'equipe/nivaldo-cardozo-consultorio.webp', alt: 'Dr. Nivaldo Cardozo Filho sentado à mesa do consultório' },
+      final: { arquivo: 'equipe/nivaldo-cardozo-consultorio.webp', alt: 'Dr. Nivaldo Cardozo Filho sentado à mesa do consultório' },
     },
   },
 
@@ -124,7 +136,7 @@ export const medicos = {
     fotos: {
       retrato: { arquivo: 'equipe/alexandre-meirelles.webp', alt: 'Dr. Alexandre Meirelles de jaleco em um consultório da UORT' },
       avatar: { arquivo: 'equipe/alexandre-meirelles-avatar.webp', alt: '' },
-      consulta: {
+      destaque: {
         arquivo: 'equipe/alexandre-meirelles-consulta.webp',
         alt: 'Dr. Alexandre Meirelles em consulta, com um modelo anatômico do quadril sobre a mesa',
         foco: '45% 50%',
@@ -145,7 +157,7 @@ export const medicos = {
     fotos: {
       retrato: { arquivo: 'equipe/alan-chagas.webp', alt: 'Dr. Alan Chagas Silva de jaleco, com os braços cruzados' },
       avatar: { arquivo: 'equipe/alan-chagas-avatar.webp', alt: '' },
-      consultorio: {
+      destaque: {
         arquivo: 'equipe/alan-chagas-consultorio.webp',
         alt: 'Dr. Alan Chagas Silva à mesa, ao lado de um modelo anatômico do quadril',
         foco: '50% 30%',

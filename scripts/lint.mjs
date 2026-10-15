@@ -86,14 +86,22 @@ export function lint() {
     if (!esp.hero?.subtitulo) erro(onde, 'hero.subtitulo obrigatório');
 
     if (esp.medicos) {
-      const { equipe = [], meio, final } = esp.medicos;
-      if (!equipe.length) erro(onde, 'medicos.equipe vazio (remova "medicos" se a página não tiver médicos)');
-      for (const id of equipe) if (!medicos[id]) erro(onde, `médico inexistente "${id}" em medicos.equipe`);
-      for (const [chave, d] of [['meio', meio], ['final', final]]) {
-        if (!d) continue;
-        if (!medicos[d.medico]) erro(onde, `médico inexistente "${d.medico}" em medicos.${chave}`);
-        else if (!equipe.includes(d.medico)) erro(onde, `medicos.${chave}: "${d.medico}" precisa estar na equipe (é lá que aparece o CRM)`);
-        else if (!medicos[d.medico].fotos[d.foto]) erro(onde, `medicos.${chave}: foto "${d.foto}" não cadastrada para "${d.medico}"`);
+      if (!Array.isArray(esp.medicos) || !esp.medicos.length) erro(onde, 'medicos deve ser uma lista de ids (remova o campo se a página não tiver médicos)');
+      const lista = Array.isArray(esp.medicos) ? esp.medicos : [];
+      for (const id of lista) if (!medicos[id]) erro(onde, `médico inexistente "${id}" em medicos`);
+      for (const id of repetidos(lista)) erro(onde, `médico repetido "${id}" em medicos`);
+      // Equilíbrio: com vários médicos, ou todos têm foto de destaque e formação, ou nenhum.
+      const doc = lista.map((id) => medicos[id]).filter(Boolean);
+      if (doc.length > 1) {
+        for (const [rotulo, tem] of [
+          ['foto de destaque', (m) => Boolean(m.fotos.destaque)],
+          ['formação', (m) => m.formacao.length > 0],
+        ]) {
+          const com = doc.filter(tem);
+          if (com.length && com.length < doc.length) {
+            aviso(onde, `${rotulo} só para ${com.map((m) => m.nome).join(', ')}; os demais aparecem com menos destaque`);
+          }
+        }
       }
     }
 

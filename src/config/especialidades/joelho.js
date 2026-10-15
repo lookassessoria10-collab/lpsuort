@@ -155,12 +155,8 @@ export default {
     texto: 'Conte com a UORT para avaliar a dor no joelho e encontrar o cuidado adequado para o seu caso.',
   },
 
-  // Equipe de joelho no site oficial: David Sadigursky, Luís Cláudio Chagas e Roney Sant’Anna.
-  medicos: {
-    equipe: ['david-sadigursky', 'luis-claudio-chagas', 'roney-santanna'],
-    meio: { medico: 'luis-claudio-chagas', foto: 'estudio' },
-    final: { medico: 'roney-santanna', foto: 'estudio' },
-  },
+  // Equipe de joelho no site oficial, em ordem alfabética.
+  medicos: ['david-sadigursky', 'luis-claudio-chagas', 'roney-santanna'],
 
   mensagemWhatsApp: 'Olá! Vim pela página de Joelho da UORT e gostaria de agendar uma consulta.',
 

@@ -157,9 +157,7 @@ export default {
   },
 
   // A CONFIRMAR: o site oficial lista também o Dr. Dayan Esteves em coluna (não há foto dele no projeto).
-  medicos: {
-    equipe: ['sergio-murilo-andrade'],
-  },
+  medicos: ['sergio-murilo-andrade'],
 
   mensagemWhatsApp: 'Olá! Vim pela página de Coluna da UORT e gostaria de agendar uma consulta.',
 

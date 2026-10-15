@@ -10,10 +10,9 @@
  * Título do hero (H1): pergunta curta sobre a dor do paciente, citando a região do corpo
  * (ex.: "Sofrendo com **dor no joelho?**"). "Especialistas em [Especialidade]" fica no eyebrow.
  *
- * Médicos (opcional): ids de src/config/medicos.js.
- *   equipe → cartões logo depois do hero e avatares no hero, nesta ordem
- *   meio   → destaque de um médico depois de "Como funciona a avaliação" (foto: chave em medico.fotos)
- *   final  → foto de um médico no CTA final
+ * Médicos (opcional): ids de src/config/medicos.js, de preferência em ordem alfabética. Todos aparecem
+ * do mesmo jeito: avatar no hero, cartão na equipe, um slide em "Conheça os especialistas" (banner
+ * rotativo quando há mais de um) e o avatar no CTA final. As fotos de cada função ficam em medicos.js.
  * Sem `medicos`, a página é publicada sem esses blocos (ex.: pé e tornozelo, sem fotos aprovadas).
  *
  * @typedef {{ arquivo: string, alt: string, foco?: string }} Imagem
@@ -40,11 +39,7 @@
  *   instituicao: { introducao: string },
  *   faq: { pergunta: string, resposta: string }[],
  *   ctaFinal: { titulo: string, texto: string },
- *   medicos?: {
- *     equipe: string[],
- *     meio?: { medico: string, foto: string },
- *     final?: { medico: string, foto: string },
- *   },
+ *   medicos?: string[],
  *   mensagemWhatsApp: string,
  *   relacionadas: string[],
  * }} Especialidade

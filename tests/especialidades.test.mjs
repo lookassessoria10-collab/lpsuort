@@ -30,7 +30,8 @@ const textoVisivel = (html) =>
 const semMedicos = (html) =>
   html
     .replace(/<section[^>]*data-medicos[\s\S]*?<\/section>/g, ' ')
-    .replace(/<(a|figure)[^>]*data-medicos[\s\S]*?<\/\1>/g, ' ');
+    .replace(/<(a|figure)[^>]*data-medicos[\s\S]*?<\/\1>/g, ' ')
+    .replace(/<div class="final-team" data-medicos>[\s\S]*?<\/ul>\s*<\/div>/g, ' ');
 
 const meta = (html, atributo, nome) =>
   html.match(new RegExp(`<meta ${atributo}="${nome}" content="([^"]*)"`))?.[1];
@@ -115,8 +116,8 @@ for (const esp of especialidades) {
           imagens.estrutura,
           ...imagens.galeria,
           ...equipe.medicos.flatMap((m) => [m.fotos.retrato, m.fotos.avatar ?? m.fotos.retrato]),
-          equipe.meio?.foto,
-          equipe.final?.foto,
+          ...equipe.destaques.map((m) => m.foto),
+          ...equipe.final.map((m) => m.foto),
           ...conveniosDe().map((c) => c.logo),
         ]
           .filter(Boolean)
@@ -126,27 +127,52 @@ for (const esp of especialidades) {
       assert.deepEqual([...publicadas].sort(), [...esperadas].sort());
     });
 
-    test('médicos: cartões com CRM, avatares no hero e destaques configurados', () => {
+    test('médicos: cartões com CRM, avatares no hero, um slide por médico e todos no CTA final', () => {
       const h = html();
-      const cfg = esp.medicos;
-      if (!cfg) {
+      const ids = esp.medicos;
+      if (!ids) {
         assert.doesNotMatch(h, /data-medicos/, 'página sem médicos configurados não exibe blocos de equipe');
         return;
       }
-      const cartoes = [...h.matchAll(/<li class="doc-card">([\s\S]*?)<\/li>/g)].map((m) => textoVisivel(m[1]));
-      assert.equal(cartoes.length, cfg.equipe.length);
-      cfg.equipe.forEach((id, i) => {
+      const cartoes = [...h.matchAll(/<li class="doc-card"[^>]*>([\s\S]*?)<\/li>/g)].map((m) => textoVisivel(m[1]));
+      assert.equal(cartoes.length, ids.length);
+      ids.forEach((id, i) => {
         assert.ok(cartoes[i].includes(medicos[id].nome), medicos[id].nome);
         assert.ok(cartoes[i].includes(registro(medicos[id])), `${medicos[id].nome} sem CRM no cartão`);
       });
       const avatares = h.match(/<a class="hero-team"[\s\S]*?<\/a>/)?.[0] ?? '';
-      assert.equal([...avatares.matchAll(/<img /g)].length, cfg.equipe.length);
-      if (cfg.meio) assert.match(h, new RegExp(`class="doc-spot"[\\s\\S]*?${registro(medicos[cfg.meio.medico])}`));
-      if (cfg.final) assert.match(h, new RegExp(`class="final-doc"[\\s\\S]*?${registro(medicos[cfg.final.medico])}`));
+      assert.equal([...avatares.matchAll(/<img /g)].length, ids.length);
+
+      const { destaques, final } = equipeDe(esp);
+      const slides = [...h.matchAll(/<(?:li|div) class="doc-spot-box"[^>]*data-medico="([^"]+)"/g)].map((m) => m[1]);
+      assert.deepEqual(slides, destaques.map((m) => m.id), 'um slide por médico, na ordem da configuração');
+      if (ids.length > 1) {
+        assert.equal(slides.length, ids.length, 'com vários médicos, todos entram em "Conheça os especialistas"');
+        assert.match(h, /data-carrossel/);
+        const abas = [...h.matchAll(/class="doc-tab"[^>]*data-medico="([^"]+)"/g)].map((m) => m[1]);
+        assert.deepEqual(abas, ids, 'o nome de cada médico fica visível acima do banner');
+        assert.deepEqual(final.map((m) => m.id), ids, 'todos os médicos no CTA final');
+      }
       // Nenhum médico de outra especialidade aparece na página.
       for (const [id, m] of Object.entries(medicos)) {
-        if (!cfg.equipe.includes(id)) assert.ok(!textoVisivel(h).includes(m.nome), `${m.nome} não pertence a ${esp.slug}`);
+        if (!ids.includes(id)) assert.ok(!textoVisivel(h).includes(m.nome), `${m.nome} não pertence a ${esp.slug}`);
       }
+    });
+
+    test('equilíbrio: com vários médicos, cada um aparece o mesmo número de vezes', () => {
+      const ids = esp.medicos ?? [];
+      if (ids.length < 2) return;
+      const h = html();
+      const vezes = (id) => (h.match(new RegExp(`data-medico="${id}"`, 'g')) ?? []).length;
+      const contagem = Object.fromEntries(ids.map((id) => [id, vezes(id)]));
+      assert.equal(new Set(Object.values(contagem)).size, 1, JSON.stringify(contagem));
+      // Mesmo número de fotos de cada um, contando os avatares do hero.
+      const fotos = (id) => {
+        const arquivos = Object.values(medicos[id].fotos).map((f) => f.arquivo);
+        return [...h.matchAll(/<img [^>]*src="([^"]+)"/g)].filter((m) => arquivos.some((a) => m[1].endsWith(a))).length;
+      };
+      const porMedico = Object.fromEntries(ids.map((id) => [id, fotos(id)]));
+      assert.equal(new Set(Object.values(porMedico)).size, 1, JSON.stringify(porMedico));
     });
 
     test('dados estruturados válidos: clínica, página médica, trilha e FAQ', () => {

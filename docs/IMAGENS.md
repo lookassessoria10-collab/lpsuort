@@ -42,20 +42,27 @@ As fotos dos médicos ficam em `src/assets/img/equipe/` e são cadastradas em `s
 recortados (retrato 4:5, avatar quadrado), reduzidos a até 1600 px e sem metadados ficam em
 `imagens-originais/equipe/`; `npm run imagens -- equipe` gera os WebP (retratos até 900 px, avatares 160 px).
 
-| Especialidade | Médicos (cartões) | Destaque do meio | Foto do CTA final |
+Cada médico tem as mesmas funções de foto: `retrato` (cartão), `avatar` (hero, botão do banner e CTA final) e
+`destaque` (slide em "Conheça os especialistas"). `final` só é usada quando o médico é o único da página.
+Nas páginas com vários médicos, todos têm retrato e destaque, para aparecerem por igual.
+
+| Médico (página) | Retrato | Destaque | Final |
 |---|---|---|---|
-| Joelho | David Sadigursky (DSC05264), Luís Cláudio Chagas (site oficial), Roney Sant’Anna (roney-091) | Luís Cláudio (img-dr-luis) | Roney (images.jpg, **365 px, baixa resolução**) |
-| Coluna | Sérgio Murilo Andrade (site oficial) | — | — |
-| Ombro | Nivaldo Cardozo Filho (DSC00814) | Nivaldo examinando um paciente (DSC00794) | Nivaldo no consultório (DSC00831) |
-| Quadril | Alexandre Meirelles (DSC03511), Alan Chagas Silva (Instagram) | Alexandre em consulta (DSC03503) | Alan com modelo do quadril (Instagram) |
-| Pé e Tornozelo | sem fotos | — | — |
+| David Sadigursky (joelho) | DSC05264, à mesa | IMG_1653, recortado só ele, na porta do consultório | — |
+| Luís Cláudio Chagas (joelho) | luis-claudio (site oficial) | img-dr-luis, blazer cinza | — |
+| Roney Sant’Anna (joelho) | roney-091, de jaleco | images.jpg, **365 px, baixa resolução** | — |
+| Sérgio Murilo Andrade (coluna) | sergio-murilo (site oficial) | — | — |
+| Nivaldo Cardozo Filho (ombro) | DSC00814 | DSC00794, examinando um paciente | DSC00831, no consultório |
+| Alan Chagas Silva (quadril) | foto do Instagram, braços cruzados | foto do Instagram, com modelo do quadril | — |
+| Alexandre Meirelles (quadril) | DSC03511 | DSC03503, em consulta | — |
 
 Observações:
 - As fotos do Dr. Luís Cláudio vieram na pasta de coluna, mas o site oficial o lista em **Joelho**; por isso ele
-  está na página de joelho. Para mudar, mova o id `luis-claudio-chagas` em `medicos.equipe`.
+  está na página de joelho. Para mudar, mova o id `luis-claudio-chagas` para a lista `medicos` de outra página.
 - DSC00794 mostra parte das costas e da tatuagem de um paciente (sem rosto). Confirme a autorização de uso.
-- Não foram usadas: a foto do Dr. David com outra pessoa (IMG_1653) e o retrato emoldurado do Dr. Luís
-  (institutoluiscarloschagas-img01).
+- Peça à UORT uma foto maior do Dr. Roney para o destaque (a atual tem 365 px e fica menos nítida que as dos
+  outros médicos de joelho).
+- Não foi usado o retrato emoldurado do Dr. Luís (institutoluiscarloschagas-img01).
 
 ## Convênios
 

@@ -160,11 +160,7 @@ export default {
     texto: 'Conte com a UORT para avaliar a dor e a limitação no ombro e encontrar o cuidado adequado para o seu caso.',
   },
 
-  medicos: {
-    equipe: ['nivaldo-cardozo'],
-    meio: { medico: 'nivaldo-cardozo', foto: 'consulta' },
-    final: { medico: 'nivaldo-cardozo', foto: 'consultorio' },
-  },
+  medicos: ['nivaldo-cardozo'],
 
   mensagemWhatsApp: 'Olá! Vim pela página de Ombro da UORT e gostaria de agendar uma consulta.',
 

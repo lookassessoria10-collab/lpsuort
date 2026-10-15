@@ -4,6 +4,7 @@
  * 2. Abertura de perguntas frequentes.
  * 3. Menu "Especialidades" do cabeçalho (fecha com clique fora ou Esc).
  * 4. Preservação de UTM/gclid nos links internos entre especialidades.
+ * 5. Banner rotativo "Conheça os especialistas" (páginas com mais de um médico).
  * O botão flutuante do WhatsApp é só HTML e CSS: fica sempre visível, sem script.
  */
 (() => {
@@ -94,4 +95,57 @@
       link.setAttribute('href', url.pathname + url.search + url.hash);
     });
   }
+
+  // 5. Banner rotativo: um médico por vez, trocando a cada 7 s enquanto está na tela.
+  //    Começa num médico sorteado, para nenhum aparecer sempre primeiro. Pausa com o mouse ou o foco
+  //    e para de vez quando a pessoa escolhe um médico ou arrasta. Sem rotação para quem prefere
+  //    menos movimento.
+  const menosMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('[data-carrossel]').forEach((carrossel) => {
+    const secao = carrossel.closest('section');
+    const trilha = carrossel.querySelector('[data-trilha]');
+    const slides = trilha ? [...trilha.children] : [];
+    const abas = [...secao.querySelectorAll('[data-ir]')];
+    if (slides.length < 2) return;
+
+    let atual = 0;
+    let pausado = false;
+    let parado = menosMovimento;
+    let visivel = false;
+
+    const marcar = (i) => {
+      atual = i;
+      abas.forEach((aba, j) => (j === i ? aba.setAttribute('aria-current', 'true') : aba.removeAttribute('aria-current')));
+    };
+    const ir = (i, suave = true) => {
+      const indice = (i + slides.length) % slides.length;
+      trilha.scrollTo({ left: slides[indice].offsetLeft, behavior: suave && !menosMovimento ? 'smooth' : 'auto' });
+      marcar(indice);
+    };
+
+    const observador = new IntersectionObserver(
+      (entradas) => entradas.forEach((e) => e.isIntersecting && marcar(slides.indexOf(e.target))),
+      { root: trilha, threshold: 0.6 },
+    );
+    slides.forEach((slide) => observador.observe(slide));
+    new IntersectionObserver(([e]) => (visivel = e.isIntersecting), { threshold: 0.3 }).observe(carrossel);
+
+    abas.forEach((aba) =>
+      aba.addEventListener('click', (e) => {
+        e.preventDefault();
+        parado = true;
+        ir(Number(aba.dataset.ir));
+      }),
+    );
+    secao.addEventListener('pointerenter', () => (pausado = true));
+    secao.addEventListener('pointerleave', () => (pausado = false));
+    secao.addEventListener('focusin', () => (pausado = true));
+    secao.addEventListener('focusout', (e) => (pausado = secao.contains(/** @type {Node} */ (e.relatedTarget))));
+    trilha.addEventListener('touchstart', () => (parado = true), { passive: true });
+
+    ir(Math.floor(Math.random() * slides.length), false);
+    setInterval(() => {
+      if (!parado && !pausado && visivel && !document.hidden) ir(atual + 1);
+    }, 7000);
+  });
 })();
