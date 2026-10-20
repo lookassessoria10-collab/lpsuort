@@ -35,4 +35,4 @@ export function linkAgendamento(esp) {
 }
 
 /** Substitui os marcadores de conteúdo pelos dados institucionais. @param {string} texto */
-export const interpolar = (texto) => texto.replace(/\{prontoAtendimento\}/g, site.prontoAtendimento.horario);
+export const interpolar = (texto) => texto.replace(/\{prontoAtendimento\}/g, site.prontoAtendimento.frase);

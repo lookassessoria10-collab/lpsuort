@@ -35,7 +35,9 @@ export function Insurance({ esp, convenios }) {
         <ul class="contact-list">
           <li>${icon('phone')}<div><span>Telefone</span>${LinkTelefone({ posicao: 'convenios', comIcone: false })}</div></li>
           <li>${icon('wa')}<div><span>WhatsApp</span><a href="${linkWhatsApp(mensagens(esp).agendamento)}" target="_blank" rel="noopener" data-cta="whatsapp" data-cta-posicao="convenios" data-cta-canal="whatsapp">${contato.whatsapp.exibicao}<span class="sr-only"> (abre o WhatsApp)</span></a></div></li>
-          <li>${icon('clock')}<div><span>Pronto Atendimento</span><p>Ortopédico, ${site.prontoAtendimento.horario}</p></div></li>
+          <li>${icon('clock')}<div><span>Pronto Atendimento</span>${site.prontoAtendimento.horarios.map(
+            (h) => html`<p>${h.dias}, ${h.horario}</p>`,
+          )}</div></li>
         </ul>
         ${BotaoWhatsApp({
           esp,

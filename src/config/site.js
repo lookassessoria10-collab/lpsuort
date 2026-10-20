@@ -40,9 +40,16 @@ export const site = {
     mapaUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoCompleto)}`,
   },
 
-  // Briefing: funciona das 8h às 19h. Não pode ser chamado de "emergência" (não é 24h nem tem suporte à vida).
-  // A CONFIRMAR: dias da semana.
-  prontoAtendimento: { horario: 'das 8h às 19h' },
+  // Horário informado pela agência. Não pode ser chamado de "emergência" (não é 24h nem tem suporte à vida).
+  prontoAtendimento: {
+    // Linhas do painel "Agendamento e contato".
+    horarios: [
+      { dias: 'Segunda a sexta', horario: 'das 07h às 19h' },
+      { dias: 'Sábado', horario: 'das 07h às 13h' },
+    ],
+    // O mesmo horário dentro de frases ({prontoAtendimento} nos textos). Mantenha igual às linhas acima.
+    frase: 'de segunda a sexta, das 07h às 19h, e aos sábados, das 07h às 13h',
+  },
 
   links: {
     site: 'https://www.uort.com.br/',

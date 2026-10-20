@@ -5,7 +5,7 @@
  * Convenções de texto usadas em todos os campos:
  *   **trecho**  → destaque em azul-turquesa
  *   \n          → quebra de linha (apenas em títulos)
- *   {prontoAtendimento} → horário do Pronto Atendimento definido em site.js
+ *   {prontoAtendimento} → horário do Pronto Atendimento em frase (site.prontoAtendimento.frase)
  *
  * Título do hero (H1): pergunta curta sobre a dor do paciente, citando a região do corpo
  * (ex.: "Sofrendo com **dor no joelho?**"). "Especialistas em [Especialidade]" fica no eyebrow.
