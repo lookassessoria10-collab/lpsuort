@@ -74,7 +74,7 @@ tamanho dos demais.
 | Situação | Convênios |
 |---|---|
 | ✅ logo do site oficial (uort.com.br/img/convenios) | ASFEB Saúde, Unimed CNU, SulAmérica, Proasa, Saúde Caixa, Postal Saúde, Seguros Unimed, Cartão Saúde Para Todos ("Paratodos") |
-| ⏳ pendente (cartão com o nome) | GEAP, PlanAssiste, Petrobras, ProSocial, Nordeste Saúde |
+| ✅ logo enviada pela agência | GEAP, PlanAssiste, Saúde Petrobras, ProSocial, Nordeste Saúde |
 
 ## Como adicionar ou substituir
 

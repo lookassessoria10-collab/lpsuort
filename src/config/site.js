@@ -66,7 +66,7 @@ export const site = {
     { id: 'geap', nome: 'GEAP' },
     { id: 'saude-para-todos', nome: 'Cartão Saúde Para Todos' },
     { id: 'planassiste', nome: 'PlanAssiste' },
-    { id: 'petrobras', nome: 'Petrobras' },
+    { id: 'petrobras', nome: 'Saúde Petrobras' },
     { id: 'prosocial', nome: 'ProSocial' },
     { id: 'nordeste-saude', nome: 'Nordeste Saúde' },
   ],
