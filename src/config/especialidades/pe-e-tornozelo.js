@@ -147,6 +147,8 @@ export default {
     texto: 'Conte com a UORT para avaliar dores e lesões no pé e no tornozelo e encontrar o cuidado adequado.',
   },
 
+  medicos: ['camilo-tavares'],
+
   mensagemWhatsApp: 'Olá! Vim pela página de Pé e Tornozelo da UORT e gostaria de agendar uma consulta.',
 
   relacionadas: ['joelho', 'quadril'],

@@ -106,8 +106,8 @@ especialistas" e avatar no CTA final. O banner começa num médico sorteado a ca
 destaque ou formação, e um teste confere que cada um aparece o mesmo número de vezes.
 
 Todo médico exibido tem o CRM no cartão (Resolução CFM nº 2.336/2023); o lint exige o CRM e avisa enquanto o
-RQE não for informado. Fora desses blocos, o texto das páginas continua sem nomes de médicos. Pé e Tornozelo
-ainda não tem fotos e é publicada sem os blocos de equipe.
+RQE não for informado. Fora desses blocos, o texto das páginas continua sem nomes de médicos. Uma página sem
+`medicos` é publicada sem os blocos de equipe.
 
 ## Como adicionar uma nova especialidade
 

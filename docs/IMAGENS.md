@@ -55,6 +55,7 @@ Nas páginas com vários médicos, todos têm retrato e destaque, para aparecere
 | Nivaldo Cardozo Filho (ombro) | DSC00814 | DSC00794, examinando um paciente | DSC00831, no consultório |
 | Alan Chagas Silva (quadril) | foto do Instagram, braços cruzados | foto do Instagram, com modelo do quadril | — |
 | Alexandre Meirelles (quadril) | DSC03511 | DSC03503, em consulta | — |
+| Camilo Tavares (pé e tornozelo) | foto de jaleco, sentado (enviada pela agência) | foto de blazer azul (enviada pela agência; cantos arredondados recortados) | — |
 
 Observações:
 - As fotos do Dr. Luís Cláudio vieram na pasta de coluna, mas o site oficial o lista em **Joelho**; por isso ele

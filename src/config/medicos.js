@@ -164,6 +164,29 @@ export const medicos = {
       },
     },
   },
+
+  // Fonte: drcamilotavares.com.br (formação) e Doctoralia (CRM e RQE; o site dele não traz o registro).
+  // Nome completo: Camilo Miranda de Pinho Tavares. Fotos enviadas pela agência.
+  'camilo-tavares': {
+    nome: 'Dr. Camilo Tavares',
+    crm: '38.784',
+    rqe: '22084',
+    area: 'Medicina e cirurgia do pé e tornozelo',
+    formacao: [
+      'Residência em Ortopedia e Traumatologia no Hospital Mater Dei, em Belo Horizonte (MG)',
+      'Membro da Associação Brasileira de Medicina e Cirurgia do Tornozelo e Pé (ABTPé)',
+      'Membro da Sociedade Brasileira de Ortopedia e Traumatologia (SBOT)',
+    ],
+    fotos: {
+      retrato: { arquivo: 'equipe/camilo-tavares.webp', alt: 'Dr. Camilo Tavares de jaleco, sentado em uma poltrona do consultório' },
+      avatar: { arquivo: 'equipe/camilo-tavares-avatar.webp', alt: '' },
+      destaque: {
+        arquivo: 'equipe/camilo-tavares-blazer.webp',
+        alt: 'Dr. Camilo Tavares de blazer azul, apoiado em uma poltrona',
+        foco: '50% 20%',
+      },
+    },
+  },
 };
 
 /** "CRM-BA 15.778 · RQE 1234" @param {Medico} m */

@@ -13,7 +13,7 @@
  * Médicos (opcional): ids de src/config/medicos.js, de preferência em ordem alfabética. Todos aparecem
  * do mesmo jeito: avatar no hero, cartão na equipe, um slide em "Conheça os especialistas" (banner
  * rotativo quando há mais de um) e o avatar no CTA final. As fotos de cada função ficam em medicos.js.
- * Sem `medicos`, a página é publicada sem esses blocos (ex.: pé e tornozelo, sem fotos aprovadas).
+ * Sem `medicos`, a página é publicada sem esses blocos.
  *
  * @typedef {{ arquivo: string, alt: string, foco?: string }} Imagem
  * @typedef {'conservador' | 'reabilitacao' | 'procedimento' | 'cirurgico'} TipoTratamento
